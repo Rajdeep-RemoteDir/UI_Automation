@@ -2,6 +2,7 @@ package Listeners;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
@@ -14,6 +15,7 @@ import com.aventstack.extentreports.markuputils.MarkupHelper;
 
 import Base.TestBase;
 import Utilities.ConfigReader;
+import Utilities.ExtentReportManager;
 
 public class ReportListeners extends TestBase implements ITestListener{
 	private static Logger log = LogManager.getLogger(ReportListeners.class);
@@ -48,6 +50,38 @@ public class ReportListeners extends TestBase implements ITestListener{
 	public void onTestfailure(ITestResult result) {
 		log.info("Test case '"+result.getMethod().getMethodName()+"' execution failed.");
 		log.info("Exception occured: "+result.getThrowable());	
+		
+		String screenshotPath = TestBase.captureScreenshot(result.getMethod().getMethodName());
+		log.info("Screenshot saved at: "+screenshotPath);
+		Markup markup = MarkupHelper.createLabel("Test case '"+result.getMethod().getMethodName()
+				+"' execution failed.", ExtentColor.RED);
+		test.log(Status.FAIL, markup);
+		test.log(Status.INFO, result.getThrowable());
+		test.addScreenCaptureFromPath(screenshotPath);
+		test.log(Status.INFO, "'"+ConfigReader.getValue("QA", "browser")+"' browser quit successfully.");
+		
+	}
+	
+	public void onTestSkipped(ITestResult result) {
+		log.info("Test case '"+result.getMethod().getMethodName()+"' execution skipped.");
+		log.info("Exception occured: "+result.getThrowable());
+		Markup markup = MarkupHelper.createLabel("Test case '"+result.getMethod().getMethodName()+"' execution skipped.", ExtentColor.ORANGE);
+		
+		test.log(Status.SKIP, markup);
+		test.log(Status.INFO, result.getThrowable());
+		test.log(Status.INFO, "'"+ConfigReader.getValue("QA", "browser")+"' browser quit successfully.");
+		
+	}
+	
+	public void onStart(ITestContext context) {
+		log.info("Test Suite execution started.");
+		report = ExtentReportManager.setupExtentReport();
+	}
+	
+	public void onFinish(ITestContext context) {
+		log.info("Test suite execution ended.");
+		report.flush();
+		log.info("ExtentReport generated.");
 	}
 }
 
