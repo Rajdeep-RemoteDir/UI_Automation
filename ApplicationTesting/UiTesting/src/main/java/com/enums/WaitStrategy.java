@@ -1,4 +1,9 @@
 package com.enums;
 
-public class WaitStrategy {
+public enum WaitStrategy {
+    VISIBLE,
+    CLICKABLE,
+    PRESENT,
+    INVISIBLE
+
 }

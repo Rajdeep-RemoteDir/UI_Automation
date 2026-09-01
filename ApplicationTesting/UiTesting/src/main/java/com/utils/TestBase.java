@@ -413,5 +413,17 @@ public class TestBase {
         }
     }
 
+    // Get Current TimeStamp with perticular format
+    protected String getCurrentTimeStamp(String format) {
+        try {
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(format);
+            String timestamp = java.time.LocalDateTime.now().format(formatter);
+            LOGGER.info("Retrieved current timestamp with format '{}': {}", format, timestamp);
+            return timestamp;
+        } catch (Exception e) {
+            LOGGER.error("Error retrieving current timestamp with format {}: {}", format, e.getMessage());
+            throw new RuntimeException("Failed to get current timestamp with format: " + format, e);
+        }
+    }
 
 }
