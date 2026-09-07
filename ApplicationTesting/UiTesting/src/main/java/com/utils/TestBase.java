@@ -19,8 +19,13 @@ public class TestBase {
 
     private static final Logger LOGGER = LoggerUtils.getLogger(TestBase.class);
     private static final int DEFAULT_WAIT_SECONDS = 10;
+    private final WebDriver driver;
 
-    WebDriver driver(){
+    public TestBase(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    protected WebDriver driver(){
         return DriverManager.getDriver();
     }
 
@@ -31,7 +36,7 @@ public class TestBase {
     //-------------- Element actions -----------------
 
     // Type text into an element with logging
-    protected void type(By Locator, String text){
+    public void type(By Locator, String text){
         try{
             WebElement element = driver().findElement(Locator);
             ((JavascriptExecutor) driver()).executeScript("arguments[0].value = arguments[1];", element, text);
@@ -49,8 +54,25 @@ public class TestBase {
         }
     }
 
+    // Validate Title of the page
+    public boolean validateTitle(String expectedTitle) {
+        try {
+            String actualTitle = driver().getTitle();
+            if (actualTitle.equals(expectedTitle)) {
+                LOGGER.info("Page title validation passed. Expected: '{}', Actual: '{}'", expectedTitle, actualTitle);
+                return true;
+            } else {
+                LOGGER.warn("Page title validation failed. Expected: '{}', Actual: '{}'", expectedTitle, actualTitle);
+                return false;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error validating page title: {}", e.getMessage());
+            throw new RuntimeException("Failed to validate page title", e);
+        }
+    }
+
     // Check if an element is present with logging
-    protected boolean isElementPresent(By locator) {
+    public boolean isElementPresent(By locator) {
         WebElement element = driver().findElement(locator);
         waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
         try {
@@ -69,7 +91,7 @@ public class TestBase {
     }
 
     // Explite wait for element visibility with logging
-    protected WebElement waitForElementVisible(By locator, int timeoutSeconds) {
+    public WebElement waitForElementVisible(By locator, int timeoutSeconds) {
         try {
             WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(timeoutSeconds));
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -86,7 +108,7 @@ public class TestBase {
     }
 
     // get attribute value of an element with logging
-    protected String getAttribute(By Locator, String attributeName) {
+    public String getAttribute(By Locator, String attributeName) {
         try {
             WebElement element = driver().findElement(Locator);
             String attributeValue = element.getAttribute(attributeName);
@@ -102,7 +124,7 @@ public class TestBase {
     }
 
     // Normal click on an element with logging
-    protected void click(By locator) {
+    public void click(By locator) {
         try {
             WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (element != null) {
@@ -118,7 +140,7 @@ public class TestBase {
     }
 
     // Click on an element using JavaScript with logging
-    protected void clickUsingJS(By locator) {
+    public void clickUsingJS(By locator) {
         try {
             WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (element != null) {
@@ -134,7 +156,7 @@ public class TestBase {
     }
 
     // Get all drop-down options of a select element with logging
-    protected List<WebElement> getDropDownOptions(By locator) {
+    public List<WebElement> getDropDownOptions(By locator) {
         try {
             WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (selectElement != null) {
@@ -153,7 +175,7 @@ public class TestBase {
     }
 
     // select drop-down option by visible text with logging
-    protected void selectDropDownOptionByVisibleText(By locator, String visibleText) {
+    public void selectDropDownOptionByVisibleText(By locator, String visibleText) {
         try {
             WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (selectElement != null) {
@@ -170,7 +192,7 @@ public class TestBase {
     }
 
     // Check if a checkbox is checked with logging
-    protected boolean isCheckBoxChecked(By locator) {
+    public boolean isCheckBoxChecked(By locator) {
         try {
             WebElement checkbox = driver().findElement(locator);
             boolean isChecked = checkbox.isSelected();
@@ -189,7 +211,7 @@ public class TestBase {
     }
 
     // Take a screenshot with logging
-    protected void takeScreenshot(String filePath) {
+    public void takeScreenshot(String filePath) {
         try {
             TakesScreenshot ts = (TakesScreenshot) driver();
             File screenshot = ts.getScreenshotAs(OutputType.FILE);
@@ -203,7 +225,7 @@ public class TestBase {
     }
 
     // Switch Window by title with logging
-    protected void switchToWindowByTitle(String windowTitle) {
+    public void switchToWindowByTitle(String windowTitle) {
         try {
             String originalWindow = driver().getWindowHandle();
             for (String windowHandle : driver().getWindowHandles()) {
@@ -222,7 +244,7 @@ public class TestBase {
     }
 
     // Switch to frame by locator with logging
-    protected void switchToFrame(By locator) {
+    public void switchToFrame(By locator) {
         try {
             WebElement frameElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (frameElement != null) {
@@ -238,7 +260,7 @@ public class TestBase {
     }
 
     // Switch back to default content with logging
-    protected void switchToDefaultContent() {
+    public void switchToDefaultContent() {
         try {
             driver().switchTo().defaultContent();
             LOGGER.info("Switched back to default content");
@@ -249,7 +271,7 @@ public class TestBase {
     }
 
     // Mouse hover over an element with logging
-    protected void mouseHover(By locator) {
+    public void mouseHover(By locator) {
         try {
             WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (element != null) {
@@ -266,7 +288,7 @@ public class TestBase {
     }
 
     // Alert handling with logging
-    protected void acceptAlert() {
+    public void acceptAlert() {
         try {
             WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(DEFAULT_WAIT_SECONDS));
             wait.until(ExpectedConditions.alertIsPresent());
@@ -282,7 +304,7 @@ public class TestBase {
     }
 
     // Dismiss alert with logging
-    protected void dismissAlert() {
+    public void dismissAlert() {
         try {
             WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(DEFAULT_WAIT_SECONDS));
             wait.until(ExpectedConditions.alertIsPresent());
@@ -298,7 +320,7 @@ public class TestBase {
     }
 
     // Get alert text with logging
-    protected String getAlertText() {
+    public String getAlertText() {
         try {
             WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(DEFAULT_WAIT_SECONDS));
             wait.until(ExpectedConditions.alertIsPresent());
@@ -316,7 +338,7 @@ public class TestBase {
     }
 
     //scroll to element with logging
-    protected void scrollToElement(By locator) {
+    public void scrollToElement(By locator) {
         try {
             WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (element != null) {
@@ -332,7 +354,7 @@ public class TestBase {
     }
 
     //scroll bottom of the page with logging
-    protected void scrollToBottom() {
+    public void scrollToBottom() {
         try {
             ((JavascriptExecutor) driver()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
             LOGGER.info("Scrolled to bottom of the page");
@@ -343,7 +365,7 @@ public class TestBase {
     }
 
     //Web table handling with logging
-    protected String getCellValueFromTable(By tableLocator, String searchText, int columnIndex) {
+    public String getCellValueFromTable(By tableLocator, String searchText, int columnIndex) {
         try {
             WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
             if (table != null) {
@@ -370,7 +392,7 @@ public class TestBase {
     }
 
     // Web table row and column number with logging
-    protected int getRowCountFromTable(By tableLocator) {
+    public int getRowCountFromTable(By tableLocator) {
         try {
             WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
             if (table != null) {
@@ -389,7 +411,7 @@ public class TestBase {
     }
 
     // Get column count from table with logging
-    protected int getColumnCountFromTable(By tableLocator) {
+    public int getColumnCountFromTable(By tableLocator) {
         try {
             WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
             if (table != null) {
@@ -414,7 +436,7 @@ public class TestBase {
     }
 
     // Get Current TimeStamp with perticular format
-    protected String getCurrentTimeStamp(String format) {
+    public String getCurrentTimeStamp(String format) {
         try {
             java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(format);
             String timestamp = java.time.LocalDateTime.now().format(formatter);

@@ -1,5 +1,6 @@
 package com.base;
 
+import com.config.ConfigReader;
 import com.exceptions.FrameworkException;
 import com.utils.LoggerUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -22,6 +23,12 @@ public final class DriverFactory {
 
     private DriverFactory() {
         // Private constructor to prevent instantiation
+    }
+
+    public static WebDriver initDriver() throws Throwable {
+        String browserName = System.getProperty("browser", ConfigReader.get("browser"));
+        boolean headless = readBooleanConfig("headless", false);
+        return initDriver(browserName, headless);
     }
 
     public static WebDriver initDriver(String browserName,boolean headless) throws Throwable {

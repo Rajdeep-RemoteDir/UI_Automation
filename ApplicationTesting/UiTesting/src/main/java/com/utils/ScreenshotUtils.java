@@ -1,5 +1,6 @@
 package com.utils;
 
+import com.base.DriverManager;
 import com.constants.FrameworkConstants;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -11,7 +12,11 @@ import java.nio.file.Paths;
 
 public class ScreenshotUtils extends TestBase {
 
-    static TestBase base = new TestBase();
+    private static final TestBase base = new TestBase(DriverManager.getDriver());
+
+    public ScreenshotUtils(WebDriver driver) {
+        super(driver);
+    }
 
     public static String capture(WebDriver driver, String testName){
         try{
