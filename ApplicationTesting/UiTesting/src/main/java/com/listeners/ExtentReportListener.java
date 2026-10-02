@@ -1,6 +1,7 @@
 package com.listeners;
 
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.base.DriverManager;
 import com.reports.ExtentReportManager;
@@ -23,6 +24,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ExtentReportListener implements ConcurrentEventListener {
 
     private static final Map<String, ExtentTest> SCENARIO_TEST_MAP = new ConcurrentHashMap<>();
+    private static final ThreadLocal<ExtentTest> CURRENT_TEST = new ThreadLocal<>();
+
+    public static void logInfo(String message) {
+        log(message, Status.INFO, true);
+    }
+
+    public static void logError(String message) {
+        log(message, Status.FAIL, true);
+    }
+
+    private static void log(String message, Status status, boolean attachScreenshot) {
+        ExtentTest test = CURRENT_TEST.get();
+        if (test == null) {
+            return;
+        }
+
+        if (attachScreenshot) {
+            String screenshotBase64 = captureScreenshotBase64();
+            if (screenshotBase64 != null) {
+                test.log(status, message, MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotBase64).build());
+                return;
+            }
+        }
+
+        test.log(status, message);
+    }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
@@ -36,15 +63,18 @@ public class ExtentReportListener implements ConcurrentEventListener {
         @Override
         public void receive(TestCaseStarted event) {
             TestCase testCase = event.getTestCase();
-            ExtentTest test = ExtentReportManager.getInstance().createTest(testCase.getName());
+            String scenarioName = testCase.getName();
+            ExtentTest test = ExtentReportManager.getInstance().createTest(scenarioName);
             SCENARIO_TEST_MAP.put(scenarioKey(testCase), test);
+            CURRENT_TEST.set(test);
         }
     }
 
     private static class TestStepFinishedHandler implements EventHandler<TestStepFinished> {
         @Override
         public void receive(TestStepFinished event) {
-            // Only report actual Gherkin steps, not @Before/@After hooks
+            // Keep the report focused on explicit custom log entries only.
+            // Do not log the generic Cucumber step text from the feature file.
             if (!(event.getTestStep() instanceof PickleStepTestStep)) {
                 return;
             }
@@ -55,18 +85,14 @@ public class ExtentReportListener implements ConcurrentEventListener {
                 return;
             }
 
-            String stepText = step.getStep().getKeyword() + step.getStep().getText();
-            Status status = mapStatus(event.getResult().getStatus());
-
-            String screenshotBase64 = captureScreenshotBase64();
-            if (screenshotBase64 != null) {
-                test.log(status, stepText).addScreenCaptureFromBase64String(screenshotBase64);
-            } else {
-                test.log(status, stepText);
-            }
-
-            if (event.getResult().getError() != null) {
-                test.log(Status.FAIL, event.getResult().getError().toString());
+            if (event.getResult() != null && event.getResult().getError() != null) {
+                String screenshotBase64 = captureScreenshotBase64();
+                if (screenshotBase64 != null) {
+                    test.log(Status.FAIL, "Error: " + event.getResult().getError().toString(),
+                            MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotBase64).build());
+                } else {
+                    test.log(Status.FAIL, "Error: " + event.getResult().getError().toString());
+                }
             }
         }
     }
@@ -74,7 +100,17 @@ public class ExtentReportListener implements ConcurrentEventListener {
     private static class TestCaseFinishedHandler implements EventHandler<TestCaseFinished> {
         @Override
         public void receive(TestCaseFinished event) {
+            ExtentTest test = SCENARIO_TEST_MAP.get(scenarioKey(event.getTestCase()));
+            if (test != null && event.getResult() != null && event.getResult().getStatus() == io.cucumber.plugin.event.Status.FAILED) {
+                String screenshotBase64 = captureScreenshotBase64();
+                if (screenshotBase64 != null) {
+                    test.log(Status.FAIL, "Scenario failed", MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotBase64).build());
+                } else {
+                    test.log(Status.FAIL, "Scenario failed");
+                }
+            }
             SCENARIO_TEST_MAP.remove(scenarioKey(event.getTestCase()));
+            CURRENT_TEST.remove();
         }
     }
 

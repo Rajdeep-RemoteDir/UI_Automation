@@ -5,10 +5,10 @@ import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
         features = "src/test/resources/features",
-        glue = "com.stepdefinitions",
-        plugin = {"pretty", "html:test-output/cucumber-reports.html","com.listener.ExtentReportListener"},
+        glue = "com.stepDefinitions",
+        plugin = {"pretty", "html:test-output/cucumber-reports.html","com.listeners.ExtentReportListener"},
         monochrome = true,
-        tags = "@SmokeTest"
+        tags = "@Smoke"
 )
 public class SmokeTestRunner extends AbstractTestNGCucumberTests {
 }

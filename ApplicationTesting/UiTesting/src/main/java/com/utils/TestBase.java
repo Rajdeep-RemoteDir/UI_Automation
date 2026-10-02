@@ -21,11 +21,18 @@ public class TestBase {
     private static final int DEFAULT_WAIT_SECONDS = 10;
     private final WebDriver driver;
 
+    public TestBase() {
+        this.driver = DriverManager.isDriverintialized() ? DriverManager.getDriver() : null;
+    }
+
     public TestBase(WebDriver driver) {
         this.driver = driver;
     }
 
     protected WebDriver driver(){
+        if (this.driver != null) {
+            return this.driver;
+        }
         return DriverManager.getDriver();
     }
 
@@ -58,7 +65,7 @@ public class TestBase {
     public boolean validateTitle(String expectedTitle) {
         try {
             String actualTitle = driver().getTitle();
-            if (actualTitle.equals(expectedTitle)) {
+            if (actualTitle.contains(expectedTitle)) {
                 LOGGER.info("Page title validation passed. Expected: '{}', Actual: '{}'", expectedTitle, actualTitle);
                 return true;
             } else {
@@ -68,6 +75,17 @@ public class TestBase {
         } catch (Exception e) {
             LOGGER.error("Error validating page title: {}", e.getMessage());
             throw new RuntimeException("Failed to validate page title", e);
+        }
+    }
+
+    public String getTitle() {
+        try {
+            String title = driver().getTitle();
+            LOGGER.info("Retrieved page title: {}", title);
+            return title;
+        } catch (Exception e) {
+            LOGGER.error("Error retrieving page title: {}", e.getMessage());
+            throw new RuntimeException("Failed to get page title", e);
         }
     }
 

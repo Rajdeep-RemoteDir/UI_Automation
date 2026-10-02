@@ -27,7 +27,7 @@ public final class DriverFactory {
 
     public static WebDriver initDriver() throws Throwable {
         String browserName = System.getProperty("browser", ConfigReader.get("browser"));
-        boolean headless = readBooleanConfig("headless", false);
+        boolean headless = readBooleanConfig("headless", ConfigReader.get("headless").equalsIgnoreCase("true"));
         return initDriver(browserName, headless);
     }
 
@@ -42,13 +42,16 @@ public final class DriverFactory {
             }
             else{
                 driver = createLocalDriver(browserType,headless);
-                LOGGER.info("Initialized local WebDriver for browser: " + browserType);
+                LOGGER.info("Initialized local WebDriver for browser: " + browserType + ", headless=" + headless);
             }
         }
         catch(Exception e){
             throw new FrameworkException("Failed to initialize WebDriver for browser: " + browserType, e);
         }
         configureTimeouts(driver);
+        if (!headless) {
+            driver.manage().window().maximize();
+        }
         DriverManager.setDriver(driver);
         return driver;
     }
@@ -121,33 +124,48 @@ public final class DriverFactory {
     }
 
     private static boolean readBooleanConfig(String key, boolean defaultValue) {
-        String value = System.getProperty(key,readOptionalConfig(key));
-        if (value == null || value.trim().isEmpty()) {
+        String systemValue = System.getProperty(key);
+        if (systemValue != null && !systemValue.trim().isEmpty()) {
+            return Boolean.parseBoolean(systemValue.trim());
+        }
+
+        String configValue = readConfigValue(key);
+        if (configValue == null || configValue.trim().isEmpty()) {
             return defaultValue;
         }
-        return Boolean.parseBoolean(value.trim());
+
+        return Boolean.parseBoolean(configValue.trim());
     }
 
     private static int readIntConfig(String key, int defaultValue) {
-        String value = System.getProperty(key,readOptionalConfig(key));
-        if (value == null || value.trim().isEmpty()) {
+        String systemValue = System.getProperty(key);
+        if (systemValue != null && !systemValue.trim().isEmpty()) {
+            try {
+                return Integer.parseInt(systemValue.trim());
+            } catch (NumberFormatException e) {
+                LOGGER.warn("Invalid integer value for config key: " + key + ". Using default: " + defaultValue);
+            }
+        }
+
+        String configValue = readConfigValue(key);
+        if (configValue == null || configValue.trim().isEmpty()) {
             return defaultValue;
         }
+
         try {
-            return Integer.parseInt(value.trim());
+            return Integer.parseInt(configValue.trim());
         } catch (NumberFormatException e) {
             LOGGER.warn("Invalid integer value for config key: " + key + ". Using default: " + defaultValue);
             return defaultValue;
         }
     }
 
-    private static String readOptionalConfig(String key) {
-        String value = System.getProperty(key);
-        if (value == null || value.trim().isEmpty()) {
-            LOGGER.debug("No value found for config key: " + key);
+    private static String readConfigValue(String key) {
+        try {
+            return ConfigReader.get(key);
+        } catch (RuntimeException e) {
             return null;
         }
-        return value.trim();
     }
 
     public static void quitDriver() {

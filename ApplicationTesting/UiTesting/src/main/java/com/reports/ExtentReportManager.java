@@ -15,7 +15,7 @@ public class ExtentReportManager {
         if (extent == null) {
             synchronized (LOCK) {
                 if (extent == null) {
-                    ExtentSparkReporter spark = new ExtentSparkReporter(FrameworkConstants.EXTENT_REPORT_DIR+"index.html");
+                    ExtentSparkReporter spark = new ExtentSparkReporter(FrameworkConstants.EXTENT_REPORT_DIR+"TestReport.html");
                     spark.config().setReportName("Automation Test Results");
                     spark.config().setDocumentTitle("Automation Test Report");
                     extent = new ExtentReports();
