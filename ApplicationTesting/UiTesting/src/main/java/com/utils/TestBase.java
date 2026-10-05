@@ -466,4 +466,14 @@ public class TestBase {
         }
     }
 
+    public static String decrypt(String encriptedString) {
+        StringBuilder decrypted = new StringBuilder();
+        for (char c : encriptedString.toCharArray()) {
+            decrypted.append((char) (c - 3)); // Simple decryption by reversing the shift
+
+        }
+        LOGGER.info("Text Decrypted Successfully, Thank you");
+        return decrypted.toString();
+    }
+
 }

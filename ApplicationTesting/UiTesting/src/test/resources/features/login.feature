@@ -5,8 +5,8 @@ Feature: User Login
   So that I can access my account
   @Smoke
   Scenario: login with valid & invalid credentials
-    When User is on the login page
-#    And the user logs in with username "Invalid_user" and password "Invalid_password"
+#    When User is on the login page
+    Given the user logs in with username "<username>" and password "<password>"
 #    Then the user should see an error message "Invalid username or password" should be displayed
 
 #  Scenario Outline: Login attempts with various credentials

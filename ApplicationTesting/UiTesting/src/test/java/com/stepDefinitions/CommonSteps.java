@@ -5,6 +5,7 @@ import com.listeners.ExtentReportListener;
 import com.pages.LoginPage;
 import com.utils.LoggerUtils;
 import com.utils.TestBase;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.apache.logging.log4j.Logger;
 
@@ -50,6 +51,24 @@ public class CommonSteps {
            LOGGER.error(message);
            ExtentReportListener.logError(message);
            throw new RuntimeException(message, e);
+        }
+    }
+
+    @Given("the user logs in with username {string} and password {string}")
+    public void the_user_logs_in_with_username_and_password(String userName, String password) {
+        try {
+            TestBase base = getBase();
+            LoginPage loginPage = getLoginPage();
+            base.type(loginPage.emailField, userName);
+            base.type(loginPage.passwordField, password);
+            base.click(loginPage.loginButton);
+
+            ExtentReportListener.logInfo("User able to login successfully");
+        } catch (Exception e) {
+            String message = "Error occurred while logging in: " + e.getMessage();
+            LOGGER.error(message);
+            ExtentReportListener.logError(message);
+            throw new RuntimeException(message, e);
         }
     }
 }

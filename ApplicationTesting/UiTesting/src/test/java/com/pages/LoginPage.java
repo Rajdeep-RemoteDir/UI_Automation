@@ -17,4 +17,6 @@ public class LoginPage extends BasePage {
     public final By submitButton = By.xpath("//button[@class='button-primary']/i");
     public final By forgetPasswordLink = By.xpath("//a[contains(text(),'Lost password')]");
 
+    public final By loginDropdown = By.xpath("//div[@id='account-dropdown']/button/i[@class='icon-down']");
+
 }
