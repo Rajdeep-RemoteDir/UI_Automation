@@ -1,11 +1,14 @@
 package com.stepDefinitions;
 
 import com.base.DriverManager;
+import com.config.EnvironmentConfig;
 import com.listeners.ExtentReportListener;
 import com.pages.LoginPage;
 import com.utils.LoggerUtils;
 import com.utils.TestBase;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +23,8 @@ public class CommonSteps {
     private TestBase getBase() {
         return new TestBase(DriverManager.getDriver());
     }
+    TestBase base = getBase();
+    LoginPage loginPage = getLoginPage();
 
     @When("User is on the login page")
     public void user_is_on_the_login_page() {
@@ -54,16 +59,25 @@ public class CommonSteps {
         }
     }
 
-    @Given("the user logs in with username {string} and password {string}")
-    public void the_user_logs_in_with_username_and_password(String userName, String password) {
+    @Given("the user logs in with Valid username and password")
+    public void the_user_logs_in_with_valid_username_and_password(){
         try {
-            TestBase base = getBase();
-            LoginPage loginPage = getLoginPage();
-            base.type(loginPage.emailField, userName);
-            base.type(loginPage.passwordField, password);
-            base.click(loginPage.loginButton);
 
-            ExtentReportListener.logInfo("User able to login successfully");
+            String userName = EnvironmentConfig.readData("qa", "email");
+            String password = EnvironmentConfig.readData("qa", "password");
+            base.type(loginPage.emailField, base.decrypt(userName) );
+            base.type(loginPage.passwordField, base.decrypt(password));
+            base.click(loginPage.loginWithCredentials);
+            base.click(loginPage.loginDropdown);
+            if(base.isElementPresent(loginPage.logoutButton)){
+                LOGGER.info("User able to login successfully");
+                ExtentReportListener.logInfo("User able to login successfully");
+            } else {
+                String message = "Login failed. Logout button not found.";
+                LOGGER.error(message);
+                ExtentReportListener.logError(message);
+                throw new AssertionError(message);
+            }
         } catch (Exception e) {
             String message = "Error occurred while logging in: " + e.getMessage();
             LOGGER.error(message);
@@ -71,4 +85,41 @@ public class CommonSteps {
             throw new RuntimeException(message, e);
         }
     }
+
+    @Then("User logouts from the application")
+    public void user_logouts_from_the_application() {
+        try{
+            if(base.isElementPresent(loginPage.logoutButton)){
+                base.click(loginPage.logoutButton);
+                LOGGER.info("User logged out successfully");
+                ExtentReportListener.logInfo("User logged out successfully");
+            }
+            else if(base.isElementPresent(loginPage.loginDropdown)){
+                base.click(loginPage.loginDropdown);
+                if(base.isElementPresent(loginPage.logoutButton)){
+                    base.click(loginPage.logoutButton);
+                    LOGGER.info("User logged out successfully");
+                    ExtentReportListener.logInfo("User logged out successfully");
+                } else {
+                    String message = "Logout button not found after clicking dropdown. User may not be logged in.";
+                    LOGGER.error(message);
+                    ExtentReportListener.logError(message);
+                    throw new AssertionError(message);
+                }
+            }
+            else {
+                String message = "Logout button not found. User may not be logged in.";
+                LOGGER.error(message);
+                ExtentReportListener.logError(message);
+                throw new AssertionError(message);
+            }
+        }
+        catch (Exception e) {
+            String message = "Error occurred while logging out: " + e.getMessage();
+            LOGGER.error(message);
+            ExtentReportListener.logError(message);
+            throw new RuntimeException(message, e);
+        }
+    }
+
 }

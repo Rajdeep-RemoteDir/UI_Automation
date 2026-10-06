@@ -78,6 +78,7 @@ public class TestBase {
         }
     }
 
+    // Capture Title of  page
     public String getTitle() {
         try {
             String title = driver().getTitle();

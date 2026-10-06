@@ -14,9 +14,11 @@ public class LoginPage extends BasePage {
 
     public final By emailField = By.xpath("//div[@class='form-field']/input[@name='username']");
     public final By passwordField = By.xpath("//div[@class='form-field']/input[@name='password']");
-    public final By submitButton = By.xpath("//button[@class='button-primary']/i");
+    public final By loginWithCredentials = By.xpath("//section[@class='auth-card']//form//button[text()='Log in']");
     public final By forgetPasswordLink = By.xpath("//a[contains(text(),'Lost password')]");
 
     public final By loginDropdown = By.xpath("//div[@id='account-dropdown']/button/i[@class='icon-down']");
+    public final By logoutButton = By.xpath("//div[@id='nav-user-menu']//button[contains(.,'Logout')]");
+
 
 }
