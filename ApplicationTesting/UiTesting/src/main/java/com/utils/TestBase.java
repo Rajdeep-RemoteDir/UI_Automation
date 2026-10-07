@@ -48,6 +48,7 @@ public class TestBase {
             WebElement element = driver().findElement(Locator);
             ((JavascriptExecutor) driver()).executeScript("arguments[0].value = arguments[1];", element, text);
             if(isElementPresent(Locator)){
+                scrollToElement(Locator);
                 element.clear();
                 element.sendKeys(text);
                 LOGGER.info("Typed text '" + text + "' into element: " + Locator);
@@ -147,6 +148,7 @@ public class TestBase {
         try {
             WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
             if (element != null) {
+                scrollToElement(locator);
                 element.click();
                 LOGGER.info("Clicked on element: {}", locator.toString());
             } else {

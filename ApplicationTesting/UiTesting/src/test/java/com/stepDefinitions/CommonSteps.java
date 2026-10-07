@@ -31,7 +31,7 @@ public class CommonSteps {
         try {
            TestBase base = getBase();
            LoginPage loginPage = getLoginPage();
-           if (base.validateTitle("Indian stocks")) {
+           if (base.validateTitle("Naukri.com")) {
                ExtentReportListener.logInfo("Title validated successfully. User is on expected login page.");
                base.click(loginPage.loginButton);
                if (base.isElementPresent(loginPage.emailField)) {

@@ -9,16 +9,15 @@ public class LoginPage extends BasePage {
         super(driver);
     }
 
-    public final By loginButton = By.xpath("//a[contains(@href,'login')]");
-    public final By getFreeAccountButton = By.xpath("//a[contains(text(),'free account')]");
+    public final By loginButton = By.xpath("//a[@id='login_Layer' and text()='Login']");
+    public final By registerButton = By.xpath("//a[@id='register_Layer' and text()='Register']");
 
-    public final By emailField = By.xpath("//div[@class='form-field']/input[@name='username']");
-    public final By passwordField = By.xpath("//div[@class='form-field']/input[@name='password']");
-    public final By loginWithCredentials = By.xpath("//section[@class='auth-card']//form//button[text()='Log in']");
-    public final By forgetPasswordLink = By.xpath("//a[contains(text(),'Lost password')]");
+    public final By emailField = By.xpath("//div[@class='login-layer']//input[contains(@placeholder,'Email ID')]");
+    public final By passwordField = By.xpath("//div[@class='login-layer']//input[contains(@placeholder,'Enter your password')]");
+    public final By loginWithCredentials = By.xpath("//button[@type='submit' and text()='Login']");
 
-    public final By loginDropdown = By.xpath("//div[@id='account-dropdown']/button/i[@class='icon-down']");
-    public final By logoutButton = By.xpath("//div[@id='nav-user-menu']//button[contains(.,'Logout')]");
+    public final By loginDropdown = By.xpath("//button[@class='nI-gNb-drawer__icon']");
+    public final By logoutButton = By.xpath("//a[@class='nI-gNb-list-cta' and @title='Logout' and contains(.,'Logout')]");
 
 
 }

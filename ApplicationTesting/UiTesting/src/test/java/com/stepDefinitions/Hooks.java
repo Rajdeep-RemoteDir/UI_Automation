@@ -14,6 +14,14 @@ public class Hooks {
     @Before
     public void setUp() {
         try {
+            // Ensure ExtentReports is initialized so report is created even when listeners are not registered
+            try {
+                com.reports.ExtentReportManager.getInstance();
+                System.out.println("ExtentReports initialized in Hooks.setUp");
+            } catch (Throwable t) {
+                System.out.println("Unable to initialize ExtentReports in Hooks: " + t.getMessage());
+            }
+
             DriverFactory.initDriver();
             DriverManager.getDriver().manage().deleteAllCookies();
             DriverManager.getDriver().get(ConfigReader.get("baseUrl"));
