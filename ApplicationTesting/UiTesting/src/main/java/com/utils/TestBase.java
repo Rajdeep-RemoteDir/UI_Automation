@@ -43,15 +43,15 @@ public class TestBase {
     //-------------- Element actions -----------------
 
     // Type text into an element with logging
-    public void type(By Locator, String text){
+    public void type(By Locator, String text,String Description){
         try{
             WebElement element = driver().findElement(Locator);
             ((JavascriptExecutor) driver()).executeScript("arguments[0].value = arguments[1];", element, text);
-            if(isElementPresent(Locator)){
-                scrollToElement(Locator);
+            if(isElementPresent(Locator, Description)){
+                scrollToElement(Locator,Description);
                 element.clear();
                 element.sendKeys(text);
-                LOGGER.info("Typed text '" + text + "' into element: " + Locator);
+                LOGGER.info(Description,"Entered");
             } else {
                 LOGGER.warn("Element not present after typing text: {}", Locator.toString());
             }
@@ -92,12 +92,12 @@ public class TestBase {
     }
 
     // Check if an element is present with logging
-    public boolean isElementPresent(By locator) {
+    public boolean isElementPresent(By locator, String Description) {
         WebElement element = driver().findElement(locator);
-        waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+        waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, Description);
         try {
             if (element != null) {
-                LOGGER.info("Element is present: {}", locator.toString());
+                LOGGER.info("Element is present: {}", Description);
                 return true;
             }
             else {
@@ -111,12 +111,12 @@ public class TestBase {
     }
 
     // Explite wait for element visibility with logging
-    public WebElement waitForElementVisible(By locator, int timeoutSeconds) {
+    public WebElement waitForElementVisible(By locator, int timeoutSeconds,String Description) {
         try {
             WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(timeoutSeconds));
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 
-            LOGGER.info("Element became visible: {}", locator.toString());
+            LOGGER.info("Element became visible: {}", Description);
             return element;
         } catch (TimeoutException e) {
             LOGGER.warn("Element not visible within {} seconds: {}", timeoutSeconds, locator.toString());
@@ -144,13 +144,13 @@ public class TestBase {
     }
 
     // Normal click on an element with logging
-    public void click(By locator) {
+    public void click(By locator,String Description) {
         try {
-            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, Description);
             if (element != null) {
-                scrollToElement(locator);
+                scrollToElement(locator, Description);
                 element.click();
-                LOGGER.info("Clicked on element: {}", locator.toString());
+                LOGGER.info("Clicked on {}", Description);
             } else {
                 LOGGER.warn("Element not clickable (not visible): {}", locator.toString());
             }
@@ -161,9 +161,9 @@ public class TestBase {
     }
 
     // Click on an element using JavaScript with logging
-    public void clickUsingJS(By locator) {
+    public void clickUsingJS(By locator, String Description) {
         try {
-            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, Description);
             if (element != null) {
                 ((JavascriptExecutor) driver()).executeScript("arguments[0].click();", element);
                 LOGGER.info("Clicked on element using JS: {}", locator.toString());
@@ -179,7 +179,7 @@ public class TestBase {
     // Get all drop-down options of a select element with logging
     public List<WebElement> getDropDownOptions(By locator) {
         try {
-            WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, "Drop-down element");
             if (selectElement != null) {
                 Select select = new Select(selectElement);
                 List<WebElement> options = select.getOptions();
@@ -198,7 +198,7 @@ public class TestBase {
     // select drop-down option by visible text with logging
     public void selectDropDownOptionByVisibleText(By locator, String visibleText) {
         try {
-            WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement selectElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, "Drop-down element");
             if (selectElement != null) {
                 Select select = new Select(selectElement);
                 select.selectByVisibleText(visibleText);
@@ -267,7 +267,7 @@ public class TestBase {
     // Switch to frame by locator with logging
     public void switchToFrame(By locator) {
         try {
-            WebElement frameElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement frameElement = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, "Frame element");
             if (frameElement != null) {
                 driver().switchTo().frame(frameElement);
                 LOGGER.info("Switched to frame: {}", locator.toString());
@@ -294,7 +294,7 @@ public class TestBase {
     // Mouse hover over an element with logging
     public void mouseHover(By locator) {
         try {
-            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, "Element for mouse hover");
             if (element != null) {
                 Actions actions = new Actions(driver());
                 actions.moveToElement(element).perform();
@@ -359,12 +359,12 @@ public class TestBase {
     }
 
     //scroll to element with logging
-    public void scrollToElement(By locator) {
+    public void scrollToElement(By locator, String description) {
         try {
-            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS);
+            WebElement element = waitForElementVisible(locator, DEFAULT_WAIT_SECONDS, description);
             if (element != null) {
                 ((JavascriptExecutor) driver()).executeScript("arguments[0].scrollIntoView(true);", element);
-                LOGGER.info("Scrolled to element: {}", locator.toString());
+                LOGGER.info("Scrolled to element: {}", description);
             } else {
                 LOGGER.warn("Element not found or not visible for scrolling: {}", locator.toString());
             }
@@ -388,7 +388,7 @@ public class TestBase {
     //Web table handling with logging
     public String getCellValueFromTable(By tableLocator, String searchText, int columnIndex) {
         try {
-            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
+            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS, "Table element");
             if (table != null) {
                 List<WebElement> rows = table.findElements(By.tagName("tr"));
                 for (WebElement row : rows) {
@@ -415,7 +415,7 @@ public class TestBase {
     // Web table row and column number with logging
     public int getRowCountFromTable(By tableLocator) {
         try {
-            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
+            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS, "Table element");
             if (table != null) {
                 List<WebElement> rows = table.findElements(By.tagName("tr"));
                 int rowCount = rows.size();
@@ -434,7 +434,7 @@ public class TestBase {
     // Get column count from table with logging
     public int getColumnCountFromTable(By tableLocator) {
         try {
-            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS);
+            WebElement table = waitForElementVisible(tableLocator, DEFAULT_WAIT_SECONDS, "Table element");
             if (table != null) {
                 List<WebElement> rows = table.findElements(By.tagName("tr"));
                 if (!rows.isEmpty()) {

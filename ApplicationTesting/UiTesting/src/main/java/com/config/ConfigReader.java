@@ -18,6 +18,9 @@ public class ConfigReader {
         PROPERTY_ALIASES.put("browserType", "browser.type");
         PROPERTY_ALIASES.put("headless", "headless.mode");
         PROPERTY_ALIASES.put("headlessMode", "headless.mode");
+        PROPERTY_ALIASES.put("headless.mode", "headless.mode");
+        PROPERTY_ALIASES.put("headless_mode", "headless.mode");
+        PROPERTY_ALIASES.put("headless-mode", "headless.mode");
 
         String env = System.getProperty("env", "qa");
         String configFilePath = "src/test/resources/configurations/config_" + env + ".properties";

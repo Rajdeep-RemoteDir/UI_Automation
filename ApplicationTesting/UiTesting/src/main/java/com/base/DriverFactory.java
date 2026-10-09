@@ -27,7 +27,7 @@ public final class DriverFactory {
 
     public static WebDriver initDriver() throws Throwable {
         String browserName = System.getProperty("browser", ConfigReader.get("browser"));
-        boolean headless = readBooleanConfig("headless", ConfigReader.get("headless").equalsIgnoreCase("true"));
+        boolean headless = readBooleanConfig("headless", false);
         return initDriver(browserName, headless);
     }
 
@@ -110,31 +110,55 @@ public final class DriverFactory {
 
     private static ChromeOptions buildChromeOptions(boolean headless) {
         ChromeOptions options = new ChromeOptions();
-        if(headless){
+        if (headless) {
             options.addArguments("--headless=new");
             options.addArguments("--disable-gpu");
-        }
-        else{
+        } else {
             options.addArguments("--start-maximized");
         }
+
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--disable-notifications");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
         options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36");
+        options.setExperimentalOption("excludeSwitches", java.util.Collections.singletonList("enable-automation"));
+        options.setExperimentalOption("useAutomationExtension", false);
         return options;
     }
 
     private static boolean readBooleanConfig(String key, boolean defaultValue) {
-        String systemValue = System.getProperty(key);
-        if (systemValue != null && !systemValue.trim().isEmpty()) {
-            return Boolean.parseBoolean(systemValue.trim());
+        for (String candidateKey : buildLookupKeys(key)) {
+            String systemValue = System.getProperty(candidateKey);
+            if (systemValue != null && !systemValue.trim().isEmpty()) {
+                return Boolean.parseBoolean(systemValue.trim());
+            }
+
+            String configValue = readConfigValue(candidateKey);
+            if (configValue != null && !configValue.trim().isEmpty()) {
+                return Boolean.parseBoolean(configValue.trim());
+            }
         }
 
-        String configValue = readConfigValue(key);
-        if (configValue == null || configValue.trim().isEmpty()) {
-            return defaultValue;
+        return defaultValue;
+    }
+
+    private static String[] buildLookupKeys(String key) {
+        String[] aliases = new String[] {
+                key,
+                key.replace("_", ""),
+                key.replace("-", ""),
+                key.replace(".", ""),
+                key.replace("_", "-").replace("-", ".")
+        };
+
+        if ("headless".equalsIgnoreCase(key)) {
+            return new String[] {"headless", "headlessMode", "headless.mode", "headless_mode", "headless-mode"};
         }
 
-        return Boolean.parseBoolean(configValue.trim());
+        return aliases;
     }
 
     private static int readIntConfig(String key, int defaultValue) {

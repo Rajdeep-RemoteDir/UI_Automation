@@ -17,7 +17,7 @@ public class Encription extends TestBase{
     }
 
     public static void main(String[] args) {
-        String password = "rajdeep.gupta1001@gmail.com";
+        String password = "**Protected**";
         String encryptedPassword = encrypt(password);
         System.out.println("Original Password: " + password);
         System.out.println("Encrypted Password: " + encryptedPassword);

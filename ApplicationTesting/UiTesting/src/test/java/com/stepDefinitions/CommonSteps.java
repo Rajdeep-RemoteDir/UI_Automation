@@ -33,8 +33,8 @@ public class CommonSteps {
            LoginPage loginPage = getLoginPage();
            if (base.validateTitle("Naukri.com")) {
                ExtentReportListener.logInfo("Title validated successfully. User is on expected login page.");
-               base.click(loginPage.loginButton);
-               if (base.isElementPresent(loginPage.emailField)) {
+               base.click(loginPage.loginButton, "Login button");
+               if (base.isElementPresent(loginPage.emailField, "Email field")) {
                    LOGGER.info("User is on the login page");
                    ExtentReportListener.logInfo("User is on the login page");
                } else {
@@ -65,11 +65,11 @@ public class CommonSteps {
 
             String userName = EnvironmentConfig.readData("qa", "email");
             String password = EnvironmentConfig.readData("qa", "password");
-            base.type(loginPage.emailField, base.decrypt(userName) );
-            base.type(loginPage.passwordField, base.decrypt(password));
-            base.click(loginPage.loginWithCredentials);
-            base.click(loginPage.loginDropdown);
-            if(base.isElementPresent(loginPage.logoutButton)){
+            base.type(loginPage.emailField, base.decrypt(userName) ,"Email id");
+            base.type(loginPage.passwordField, base.decrypt(password),"Password");
+            base.click(loginPage.loginWithCredentials,"Login button");
+            base.click(loginPage.loginDropdown,"Profile dropdown");
+            if(base.isElementPresent(loginPage.logoutButton, "Logout button")){
                 LOGGER.info("User able to login successfully");
                 ExtentReportListener.logInfo("User able to login successfully");
             } else {
@@ -89,15 +89,15 @@ public class CommonSteps {
     @Then("User logouts from the application")
     public void user_logouts_from_the_application() {
         try{
-            if(base.isElementPresent(loginPage.logoutButton)){
-                base.click(loginPage.logoutButton);
+            if(base.isElementPresent(loginPage.logoutButton, "Logout button")){
+                base.click(loginPage.logoutButton,"Logout button");
                 LOGGER.info("User logged out successfully");
                 ExtentReportListener.logInfo("User logged out successfully");
             }
-            else if(base.isElementPresent(loginPage.loginDropdown)){
-                base.click(loginPage.loginDropdown);
-                if(base.isElementPresent(loginPage.logoutButton)){
-                    base.click(loginPage.logoutButton);
+            else if(base.isElementPresent(loginPage.loginDropdown, "Profile dropdown")){
+                base.click(loginPage.loginDropdown,"Profile dropdown");
+                if(base.isElementPresent(loginPage.logoutButton , "Logout button")){
+                    base.click(loginPage.logoutButton,"Logout button");
                     LOGGER.info("User logged out successfully");
                     ExtentReportListener.logInfo("User logged out successfully");
                 } else {
