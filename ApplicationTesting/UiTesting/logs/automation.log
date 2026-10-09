@@ -1,0 +1,40 @@
+2026-10-09 14:29:55 [main] INFO  com.base.DriverFactory - Initialized local WebDriver for browser: CHROME, headless=false
+2026-10-09 14:29:58 [main] INFO  com.utils.TestBase - Page title validation passed. Expected: 'Naukri.com', Actual: 'Jobs - Recruitment - Job Search - Employment - Job Vacancies - Naukri.com'
+2026-10-09 14:29:58 [main] INFO  com.utils.TestBase - Element became visible: Login button
+2026-10-09 14:29:58 [main] INFO  com.utils.TestBase - Element became visible: Login button
+2026-10-09 14:29:59 [main] INFO  com.utils.TestBase - Scrolled to element: Login button
+2026-10-09 14:29:59 [main] INFO  com.utils.TestBase - Clicked on Login button
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Email field
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element is present: Email field
+2026-10-09 14:30:00 [main] INFO  com.stepDefinitions.CommonSteps - User is on the login page
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Text Decrypted Successfully, Thank you
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Email id
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element is present: Email id
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Email id
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Scrolled to element: Email id
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Email id
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Text Decrypted Successfully, Thank you
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Password
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element is present: Password
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Password
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Scrolled to element: Password
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Password
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Login button
+2026-10-09 14:30:00 [main] INFO  com.utils.TestBase - Element became visible: Login button
+2026-10-09 14:30:01 [main] INFO  com.utils.TestBase - Scrolled to element: Login button
+2026-10-09 14:30:01 [main] INFO  com.utils.TestBase - Clicked on Login button
+2026-10-09 14:30:02 [main] INFO  com.utils.TestBase - Element became visible: Profile dropdown
+2026-10-09 14:30:03 [main] INFO  com.utils.TestBase - Element became visible: Profile dropdown
+2026-10-09 14:30:03 [main] INFO  com.utils.TestBase - Scrolled to element: Profile dropdown
+2026-10-09 14:30:03 [main] INFO  com.utils.TestBase - Clicked on Profile dropdown
+2026-10-09 14:30:04 [main] INFO  com.utils.TestBase - Element became visible: Logout button
+2026-10-09 14:30:04 [main] INFO  com.utils.TestBase - Element is present: Logout button
+2026-10-09 14:30:04 [main] INFO  com.stepDefinitions.CommonSteps - User able to login successfully
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Element became visible: Logout button
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Element is present: Logout button
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Element became visible: Logout button
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Element became visible: Logout button
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Scrolled to element: Logout button
+2026-10-09 14:30:05 [main] INFO  com.utils.TestBase - Clicked on Logout button
+2026-10-09 14:30:05 [main] INFO  com.stepDefinitions.CommonSteps - User logged out successfully
+2026-10-09 14:30:08 [main] INFO  com.base.DriverFactory - WebDriver instance quit successfully for thread: main
