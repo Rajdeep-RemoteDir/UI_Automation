@@ -9,6 +9,8 @@ public class LoginPage extends BasePage {
         super(driver);
     }
 
+    // Locators for LoginPage elements
+
     public final By loginButton = By.xpath("//a[@id='login_Layer' and text()='Login']");
     public final By registerButton = By.xpath("//a[@id='register_Layer' and text()='Register']");
 

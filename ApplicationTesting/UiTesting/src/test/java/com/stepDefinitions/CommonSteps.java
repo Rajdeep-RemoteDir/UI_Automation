@@ -4,6 +4,7 @@ import com.base.DriverManager;
 import com.config.EnvironmentConfig;
 import com.listeners.ExtentReportListener;
 import com.pages.LoginPage;
+import com.tests.ResumeProfileTest;
 import com.utils.LoggerUtils;
 import com.utils.TestBase;
 import io.cucumber.java.en.And;
@@ -12,7 +13,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.logging.log4j.Logger;
 
-public class CommonSteps {
+import java.util.HashMap;
+import java.util.Map;
+
+public class CommonSteps extends TestBase {
 
     private static final Logger LOGGER = LoggerUtils.getLogger(CommonSteps.class);
 
